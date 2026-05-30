@@ -55,11 +55,59 @@ If the user asks to schedule a task, use the scheduleTask tool.`
       .withCachedPrompt();
   }
 
+  // Web search via Linkup (https://docs.linkup.so). Plain REST API,
+  // so it works in Workers with fetch — no Node SDK required.
+  private searchWeb = tool({
+    description:
+      "Search the web for up-to-date information using Linkup. Returns relevant results with titles, URLs, and content snippets.",
+    inputSchema: z.object({
+      query: z.string().describe("Natural language search query"),
+      depth: z
+        .enum(["standard", "deep"])
+        .default("standard")
+        .describe(
+          "standard: fast agentic search for most queries; deep: multi-iteration search for comprehensive coverage"
+        )
+    }),
+    execute: async ({ query, depth }) => {
+      const apiKey = this.env.LINKUP_API_KEY;
+      if (!apiKey) {
+        return { error: "LINKUP_API_KEY is not configured." };
+      }
+      const res = await fetch("https://api.linkup.so/v1/search", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          q: query,
+          depth,
+          outputType: "searchResults",
+          includeImages: false
+        })
+      });
+      if (!res.ok) {
+        return {
+          error: `Linkup search failed: ${res.status} ${await res.text()}`
+        };
+      }
+      return await res.json();
+    }
+  });
+
   override getTools(): ToolSet {
     return {
+      // Top-level web search tool.
+      searchWeb: this.searchWeb,
+
       // Sandboxed JS execution with full workspace filesystem access.
+      // Web search is also exposed inside the sandbox as `codemode.searchWeb`.
       execute: createExecuteTool({
-        tools: createWorkspaceTools(this.workspace),
+        tools: {
+          ...createWorkspaceTools(this.workspace),
+          searchWeb: this.searchWeb
+        },
         state: createWorkspaceStateBackend(this.workspace),
         loader: this.env.LOADER
       }),
