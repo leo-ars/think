@@ -1,5 +1,5 @@
-import { createWorkersAI } from "workers-ai-provider";
 import { Think } from "@cloudflare/think";
+import { createWorkersAI } from "workers-ai-provider";
 import { RESEARCH_SYSTEM_PROMPT } from "../prompts";
 
 /**

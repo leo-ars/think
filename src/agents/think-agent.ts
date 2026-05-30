@@ -1,6 +1,6 @@
-import { createWorkersAI } from "workers-ai-provider";
+import { type Session, Think, Workspace } from "@cloudflare/think";
 import { callable, type Schedule } from "agents";
-import { Think, Session, Workspace } from "@cloudflare/think";
+import { createWorkersAI } from "workers-ai-provider";
 import { buildSoulPrompt } from "../prompts";
 import { buildTools } from "../tools";
 

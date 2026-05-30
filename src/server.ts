@@ -1,9 +1,9 @@
 import { routeAgentRequest } from "agents";
 
+export { ResearchAgent } from "./agents/research-agent";
 // Durable Object classes must be exported from the Worker's main module
 // (configured as `main` in wrangler.jsonc) so their bindings resolve.
 export { ThinkAgent } from "./agents/think-agent";
-export { ResearchAgent } from "./agents/research-agent";
 
 export default {
   async fetch(request: Request, env: Env) {

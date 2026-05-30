@@ -1,9 +1,4 @@
-import { Suspense, useCallback, useState, useEffect, useRef } from "react";
-import { useAgent } from "agents/react";
 import { useAgentChat } from "@cloudflare/ai-chat/react";
-import { getToolName, isToolUIPart, type UIMessage } from "ai";
-import type { MCPServersState } from "agents";
-import type { ThinkAgent } from "./server";
 import {
   Badge,
   Button,
@@ -14,30 +9,35 @@ import {
   Text
 } from "@cloudflare/kumo";
 import { Toasty, useKumoToastManager } from "@cloudflare/kumo/components/toast";
-import { Streamdown } from "streamdown";
-import { code } from "@streamdown/code";
 import {
-  PaperPlaneRightIcon,
-  StopIcon,
-  TrashIcon,
-  GearIcon,
-  ChatCircleDotsIcon,
-  CircleIcon,
-  MoonIcon,
-  SunIcon,
-  CheckCircleIcon,
-  XCircleIcon,
   BrainIcon,
-  CaretDownIcon,
   BugIcon,
+  CaretDownIcon,
+  ChatCircleDotsIcon,
+  CheckCircleIcon,
+  CircleIcon,
+  GearIcon,
+  ImageIcon,
+  MoonIcon,
+  PaperclipIcon,
+  PaperPlaneRightIcon,
   PlugsConnectedIcon,
   PlusIcon,
   SignInIcon,
-  XIcon,
+  StopIcon,
+  SunIcon,
+  TrashIcon,
   WrenchIcon,
-  PaperclipIcon,
-  ImageIcon
+  XCircleIcon,
+  XIcon
 } from "@phosphor-icons/react";
+import { code } from "@streamdown/code";
+import type { MCPServersState } from "agents";
+import { useAgent } from "agents/react";
+import { getToolName, isToolUIPart, type UIMessage } from "ai";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Streamdown } from "streamdown";
+import type { ThinkAgent } from "./server";
 
 // ── Attachment helpers ────────────────────────────────────────────────
 
@@ -105,7 +105,9 @@ function ToolPartView({
     approved: boolean;
   }) => void;
 }) {
-  if (!isToolUIPart(part)) return null;
+  if (!isToolUIPart(part)) {
+    return null;
+  }
   const toolName = getToolName(part);
 
   // Completed
@@ -274,7 +276,9 @@ function Chat() {
 
   // Close MCP panel when clicking outside
   useEffect(() => {
-    if (!showMcpPanel) return;
+    if (!showMcpPanel) {
+      return;
+    }
     function handleClickOutside(e: MouseEvent) {
       if (
         mcpPanelRef.current &&
@@ -288,7 +292,9 @@ function Chat() {
   }, [showMcpPanel]);
 
   const handleAddServer = async () => {
-    if (!mcpName.trim() || !mcpUrl.trim()) return;
+    if (!mcpName.trim() || !mcpUrl.trim()) {
+      return;
+    }
     setIsAddingServer(true);
     try {
       await agent.stub.addServer(mcpName.trim(), mcpUrl.trim());
@@ -341,7 +347,7 @@ function Chat() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, []);
 
   // Re-focus the input after streaming ends
   useEffect(() => {
@@ -352,14 +358,18 @@ function Chat() {
 
   const addFiles = useCallback((files: FileList | File[]) => {
     const images = Array.from(files).filter((f) => f.type.startsWith("image/"));
-    if (images.length === 0) return;
+    if (images.length === 0) {
+      return;
+    }
     setAttachments((prev) => [...prev, ...images.map(createAttachment)]);
   }, []);
 
   const removeAttachment = useCallback((id: string) => {
     setAttachments((prev) => {
       const att = prev.find((a) => a.id === id);
-      if (att) URL.revokeObjectURL(att.preview);
+      if (att) {
+        URL.revokeObjectURL(att.preview);
+      }
       return prev.filter((a) => a.id !== id);
     });
   }, []);
@@ -367,13 +377,17 @@ function Chat() {
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.dataTransfer.types.includes("Files")) setIsDragging(true);
+    if (e.dataTransfer.types.includes("Files")) {
+      setIsDragging(true);
+    }
   }, []);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.currentTarget === e.target) setIsDragging(false);
+    if (e.currentTarget === e.target) {
+      setIsDragging(false);
+    }
   }, []);
 
   const handleDrop = useCallback(
@@ -381,7 +395,9 @@ function Chat() {
       e.preventDefault();
       e.stopPropagation();
       setIsDragging(false);
-      if (e.dataTransfer.files.length > 0) addFiles(e.dataTransfer.files);
+      if (e.dataTransfer.files.length > 0) {
+        addFiles(e.dataTransfer.files);
+      }
     },
     [addFiles]
   );
@@ -389,12 +405,16 @@ function Chat() {
   const handlePaste = useCallback(
     (e: React.ClipboardEvent) => {
       const items = e.clipboardData?.items;
-      if (!items) return;
+      if (!items) {
+        return;
+      }
       const files: File[] = [];
       for (const item of items) {
         if (item.kind === "file") {
           const file = item.getAsFile();
-          if (file) files.push(file);
+          if (file) {
+            files.push(file);
+          }
         }
       }
       if (files.length > 0) {
@@ -407,28 +427,37 @@ function Chat() {
 
   const send = useCallback(async () => {
     const text = input.trim();
-    if ((!text && attachments.length === 0) || isStreaming) return;
+    if ((!text && attachments.length === 0) || isStreaming) {
+      return;
+    }
     setInput("");
 
     const parts: Array<
       | { type: "text"; text: string }
       | { type: "file"; mediaType: string; url: string }
     > = [];
-    if (text) parts.push({ type: "text", text });
+    if (text) {
+      parts.push({ type: "text", text });
+    }
 
     for (const att of attachments) {
       const dataUri = await fileToDataUri(att.file);
       parts.push({ type: "file", mediaType: att.mediaType, url: dataUri });
     }
 
-    for (const att of attachments) URL.revokeObjectURL(att.preview);
+    for (const att of attachments) {
+      URL.revokeObjectURL(att.preview);
+    }
     setAttachments([]);
 
     sendMessage({ role: "user", parts });
-    if (textareaRef.current) textareaRef.current.style.height = "auto";
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
   }, [input, attachments, isStreaming, sendMessage]);
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop file drop zone, not a focusable control
     <div
       className="flex flex-col h-screen bg-kumo-elevated relative"
       onDragOver={handleDragOver}
@@ -729,6 +758,7 @@ function Chat() {
                     };
                     const isDone = reasoning.state === "done" || !isStreaming;
                     return (
+                      // biome-ignore lint/suspicious/noArrayIndexKey: message parts render in a stable order and are not reordered
                       <div key={i} className="flex justify-start">
                         <details className="max-w-[85%] w-full" open={!isDone}>
                           <summary className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-sm select-none">
@@ -767,9 +797,9 @@ function Chat() {
                         "image/"
                       ) === true
                   )
-                  .map((part, i) => (
+                  .map((part) => (
                     <div
-                      key={`file-${i}`}
+                      key={`file-${part.url}`}
                       className={`flex ${isUser ? "justify-end" : "justify-start"}`}
                     >
                       <img
@@ -785,10 +815,13 @@ function Chat() {
                   .filter((part) => part.type === "text")
                   .map((part, i) => {
                     const text = (part as { type: "text"; text: string }).text;
-                    if (!text) return null;
+                    if (!text) {
+                      return null;
+                    }
 
                     if (isUser) {
                       return (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: message parts render in a stable order and are not reordered
                         <div key={i} className="flex justify-end">
                           <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-br-md bg-kumo-contrast text-kumo-inverse leading-relaxed">
                             {text}
@@ -798,6 +831,7 @@ function Chat() {
                     }
 
                     return (
+                      // biome-ignore lint/suspicious/noArrayIndexKey: message parts render in a stable order and are not reordered
                       <div key={i} className="flex justify-start">
                         <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-kumo-base text-kumo-default leading-relaxed">
                           <Streamdown
@@ -837,7 +871,9 @@ function Chat() {
             aria-label="Upload image attachments"
             className="hidden"
             onChange={(e) => {
-              if (e.target.files) addFiles(e.target.files);
+              if (e.target.files) {
+                addFiles(e.target.files);
+              }
               e.target.value = "";
             }}
           />

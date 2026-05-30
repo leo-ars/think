@@ -1,6 +1,6 @@
-import { tool, type ToolSet } from "ai";
-import { z } from "zod";
 import { scheduleSchema } from "agents/schedule";
+import { type ToolSet, tool } from "ai";
+import { z } from "zod";
 import type { ToolContext } from "./types";
 
 /**
@@ -26,7 +26,9 @@ export function createSchedulingTools(ctx: ToolContext): ToolSet {
               : when.type === "cron"
                 ? when.cron
                 : null;
-        if (!input) return "Invalid schedule type";
+        if (!input) {
+          return "Invalid schedule type";
+        }
         try {
           ctx.agent.schedule(input, "executeTask", description, {
             idempotent: true

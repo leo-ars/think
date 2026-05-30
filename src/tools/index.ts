@@ -1,15 +1,15 @@
-import { type ToolSet } from "ai";
+import { createWorkspaceStateBackend } from "@cloudflare/shell";
+import { createBrowserTools } from "@cloudflare/think/tools/browser";
 import { createExecuteTool } from "@cloudflare/think/tools/execute";
 import { createWorkspaceTools } from "@cloudflare/think/tools/workspace";
-import { createBrowserTools } from "@cloudflare/think/tools/browser";
-import { createWorkspaceStateBackend } from "@cloudflare/shell";
-import type { ToolContext } from "./types";
-import { createSearchTool } from "./search";
-import { createSchedulingTools } from "./scheduling";
-import { createResearchTool } from "./research";
-import { weatherTool } from "./weather";
-import { userTimezoneTool } from "./timezone";
+import type { ToolSet } from "ai";
 import { calculatorTool } from "./calculator";
+import { createResearchTool } from "./research";
+import { createSchedulingTools } from "./scheduling";
+import { createSearchTool } from "./search";
+import { userTimezoneTool } from "./timezone";
+import type { ToolContext } from "./types";
+import { weatherTool } from "./weather";
 
 /**
  * Assemble the full tool set for the agent.

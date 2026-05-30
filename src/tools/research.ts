@@ -1,6 +1,6 @@
+import type { StreamCallback } from "@cloudflare/think";
 import { tool } from "ai";
 import { z } from "zod";
-import type { StreamCallback } from "@cloudflare/think";
 import { ResearchAgent } from "../agents/research-agent";
 import { extractText, type ToolContext } from "./types";
 
