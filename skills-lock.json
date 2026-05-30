@@ -19,6 +19,12 @@
       "skillPath": "skills/cloudflare-email-service/SKILL.md",
       "computedHash": "6274be056fe5211aa220833c97ff6a7d96a1cdfd8854a53ca839ca758d35f356"
     },
+    "cloudflare-workers-monorepo-quality-setup": {
+      "source": "leo-ars/cloudflare-monorepo-quality-setup",
+      "sourceType": "github",
+      "skillPath": "skills/cloudflare-monorepo-quality-setup/SKILL.md",
+      "computedHash": "7af86f0f1993377a13e671019e61c2c8a44e841acb04148f4fe7bcef2d76dbad"
+    },
     "durable-objects": {
       "source": "cloudflare/skills",
       "sourceType": "github",
