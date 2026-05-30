@@ -20,11 +20,14 @@
     "check": "oxfmt --check . && oxlint src/ && tsc"
   },
   "dependencies": {
-    "@cloudflare/ai-chat": "^0.7.1",
+    "@cloudflare/ai-chat": "^0.7.2",
+    "@cloudflare/codemode": "^0.3.8",
     "@cloudflare/kumo": "^2.2.2",
+    "@cloudflare/shell": "^0.3.8",
+    "@cloudflare/think": "^0.7.3",
     "@phosphor-icons/react": "^2.1.10",
     "@streamdown/code": "^1.1.1",
-    "agents": "^0.13.2",
+    "agents": "^0.13.3",
     "ai": "^6.0.188",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
