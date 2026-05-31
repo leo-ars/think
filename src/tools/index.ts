@@ -1,9 +1,11 @@
 import { createWorkspaceStateBackend } from "@cloudflare/shell";
+import { gitTools } from "@cloudflare/shell/git";
 import { createBrowserTools } from "@cloudflare/think/tools/browser";
 import { createExecuteTool } from "@cloudflare/think/tools/execute";
 import { createWorkspaceTools } from "@cloudflare/think/tools/workspace";
 import type { ToolSet } from "ai";
 import { calculatorTool } from "./calculator";
+import { createGitTools } from "./git";
 import { createResearchTool } from "./research";
 import { createSchedulingTools } from "./scheduling";
 import { createSearchTool } from "./search";
@@ -35,6 +37,9 @@ export function buildTools(ctx: ToolContext): ToolSet {
         searchWeb
       },
       state: createWorkspaceStateBackend(ctx.agent.workspace),
+      providers: [
+        gitTools(ctx.agent.workspace, { token: ctx.env.GITHUB_TOKEN })
+      ],
       loader: ctx.env.LOADER
     }),
 
@@ -51,6 +56,9 @@ export function buildTools(ctx: ToolContext): ToolSet {
 
     // Scheduling feature (create / list / cancel).
     ...createSchedulingTools(ctx),
+
+    // GitHub interaction (clone / inspect / commit+push).
+    ...createGitTools(ctx),
 
     // Sub-agent delegation.
     delegateResearch: createResearchTool(ctx)
